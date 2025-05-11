@@ -1,0 +1,21 @@
+REGRAS PARA ÁRVORE RUBRO NEGRA
+
+-> Todos os nós devem ter uma cor, seja ela preta ou vermelha.
+-> A raiz da árvore sempre será preta.
+-> Se um nó é vermelho, seus filhos devem ser obrigatóriamente pretos.
+-> Todo percurso da raiz até um nó folha ou filho nulo deve conter a mesma quantidade de nós pretos.
+
+
+# INSERÇÃO DE NÓS #
+-> Sempre que um nó for inserido ele será vermelho.
+-> Sempre se deve verificar casos de rebalanceamento, esses casos são:
+    -> Tio vermelho: recoloração.
+    -> Tio preto + desequilíbrio: rotações.
+        -> Verificar se o nó inserido é a esquerda ou direita, assim podemos
+        aplicar as devidas rotações(a regra é simétrica para os lados que o tio se encontra).
+        -> Caso o novo nó filho inserido fique a direita, rotacionamos a esquerda.
+
+# REMOÇÃO DE NÓS #
+-> Fazer uma busca do nó
+-> Substituir caso tenha 2 filhos
+-> Fazer a correção

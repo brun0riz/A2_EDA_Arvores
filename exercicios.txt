@@ -1,0 +1,17 @@
+Sistema de Inventário com Árvore Rubro-Negra (1pt)
+
+Objetivo: Desenvolver um sistema de inventário para gerenciar produtos usando uma Árvore Rubro-Negra, que organiza os produtos com base em um código único. O sistema deve oferecer operações eficientes de cadastro, remoção e busca, utilizando as propriedades da Árvore Rubro-Negra.
+Descrição do Sistema: O sistema deve armazenar informações de cada produto, como:
+Código do produto (chave para organização na árvore).
+Nome do produto.
+Quantidade em estoque.
+Preço por unidade.
+A Árvore Rubro-Negra será usada para armazenar os produtos de forma balanceada, garantindo que as operações sejam realizadas em tempo logarítmico.
+
+Requisitos Funcionais:
+Cadastrar Produto: Adicionar um novo produto à árvore. Após o cadastro:
+Verifique as propriedades da Árvore Rubro-Negra (como cores dos nós e balanceamento).
+Faça ajustes necessários com rotações e mudanças de cor.
+Remover Produto: Remover um produto do inventário baseado no código. Após a remoção: Verifique e mantenha as propriedades da Árvore Rubro-Negra.
+Buscar Produto: Buscar um produto na árvore com base no código do produto e exibir suas informações, se encontrado.
+Listar Produtos: Percorrer a árvore em ordem (in-order traversal) e listar os produtos de forma ordenada pelo código, , adicionando a cor do nó referente.
