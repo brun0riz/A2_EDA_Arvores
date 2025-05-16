@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
+// Estrutura do nó da árvore AVL para armazenar usuários
 typedef struct Usuario {
     char nome[100];
     int id;
@@ -11,21 +12,24 @@ typedef struct Usuario {
     struct Usuario *esq, *dir;
 } Usuario;
 
-// Função para converter string para minúsculo
+// Converte uma string para minúsculo (para evitar duplicidade por caixa)
 void toLowerStr(char *str) {
     for (int i = 0; str[i]; i++)
         str[i] = tolower((unsigned char)str[i]);
 }
 
+// Retorna a altura de um nó
 int altura(Usuario *n) {
     if (n == NULL) return 0;
     return n->altura;
 }
 
+// Retorna o maior entre dois valores
 int max(int a, int b) {
     return (a > b) ? a : b;
 }
 
+// Cria um novo usuário (nó)
 Usuario* novoUsuario(char *nome, int id, char *email) {
     Usuario* u = (Usuario*)malloc(sizeof(Usuario));
     strcpy(u->nome, nome);
@@ -36,11 +40,13 @@ Usuario* novoUsuario(char *nome, int id, char *email) {
     return u;
 }
 
+// Calcula o fator de balanceamento de um nó
 int fatorBalanceamento(Usuario *n) {
     if (n == NULL) return 0;
     return altura(n->esq) - altura(n->dir);
 }
 
+// Rotação simples à direita
 Usuario* rotacaoDireita(Usuario *y) {
     Usuario *x = y->esq;
     Usuario *T2 = x->dir;
@@ -51,6 +57,7 @@ Usuario* rotacaoDireita(Usuario *y) {
     return x;
 }
 
+// Rotação simples à esquerda
 Usuario* rotacaoEsquerda(Usuario *x) {
     Usuario *y = x->dir;
     Usuario *T2 = y->esq;
@@ -61,6 +68,7 @@ Usuario* rotacaoEsquerda(Usuario *x) {
     return y;
 }
 
+// Insere um novo usuário na árvore AVL
 Usuario* inserir(Usuario* raiz, char *nome, int id, char *email) {
     if (raiz == NULL) return novoUsuario(nome, id, email);
 
@@ -71,20 +79,25 @@ Usuario* inserir(Usuario* raiz, char *nome, int id, char *email) {
     else
         return raiz; // nomes iguais não são permitidos
 
+    // Atualiza altura e balanceia
     raiz->altura = 1 + max(altura(raiz->esq), altura(raiz->dir));
     int fb = fatorBalanceamento(raiz);
 
+    // Rotação simples à direita
     if (fb > 1 && strcmp(nome, raiz->esq->nome) < 0)
         return rotacaoDireita(raiz);
 
+    // Rotação simples à esquerda
     if (fb < -1 && strcmp(nome, raiz->dir->nome) > 0)
         return rotacaoEsquerda(raiz);
 
+    // Rotação dupla esquerda-direita
     if (fb > 1 && strcmp(nome, raiz->esq->nome) > 0) {
         raiz->esq = rotacaoEsquerda(raiz->esq);
         return rotacaoDireita(raiz);
     }
 
+    // Rotação dupla direita-esquerda
     if (fb < -1 && strcmp(nome, raiz->dir->nome) < 0) {
         raiz->dir = rotacaoDireita(raiz->dir);
         return rotacaoEsquerda(raiz);
@@ -93,6 +106,7 @@ Usuario* inserir(Usuario* raiz, char *nome, int id, char *email) {
     return raiz;
 }
 
+// Retorna o nó com menor valor (usado na remoção)
 Usuario* menorValor(Usuario* raiz) {
     Usuario* atual = raiz;
     while (atual->esq != NULL)
@@ -100,6 +114,7 @@ Usuario* menorValor(Usuario* raiz) {
     return atual;
 }
 
+// Remove um usuário da árvore AVL
 Usuario* remover(Usuario* raiz, char *nome) {
     if (raiz == NULL) return raiz;
 
@@ -108,6 +123,7 @@ Usuario* remover(Usuario* raiz, char *nome) {
     else if (strcmp(nome, raiz->nome) > 0)
         raiz->dir = remover(raiz->dir, nome);
     else {
+        // Nó com um ou nenhum filho
         if ((raiz->esq == NULL) || (raiz->dir == NULL)) {
             Usuario *temp = raiz->esq ? raiz->esq : raiz->dir;
             if (temp == NULL) {
@@ -117,6 +133,7 @@ Usuario* remover(Usuario* raiz, char *nome) {
                 *raiz = *temp;
             free(temp);
         } else {
+            // Nó com dois filhos: pega o menor da subárvore direita
             Usuario* temp = menorValor(raiz->dir);
             strcpy(raiz->nome, temp->nome);
             raiz->id = temp->id;
@@ -127,20 +144,25 @@ Usuario* remover(Usuario* raiz, char *nome) {
 
     if (raiz == NULL) return raiz;
 
+    // Atualiza altura e balanceia
     raiz->altura = 1 + max(altura(raiz->esq), altura(raiz->dir));
     int fb = fatorBalanceamento(raiz);
 
+    // Rotação simples à direita
     if (fb > 1 && fatorBalanceamento(raiz->esq) >= 0)
         return rotacaoDireita(raiz);
 
+    // Rotação dupla esquerda-direita
     if (fb > 1 && fatorBalanceamento(raiz->esq) < 0) {
         raiz->esq = rotacaoEsquerda(raiz->esq);
         return rotacaoDireita(raiz);
     }
 
+    // Rotação simples à esquerda
     if (fb < -1 && fatorBalanceamento(raiz->dir) <= 0)
         return rotacaoEsquerda(raiz);
 
+    // Rotação dupla direita-esquerda
     if (fb < -1 && fatorBalanceamento(raiz->dir) > 0) {
         raiz->dir = rotacaoDireita(raiz->dir);
         return rotacaoEsquerda(raiz);
@@ -149,6 +171,7 @@ Usuario* remover(Usuario* raiz, char *nome) {
     return raiz;
 }
 
+// Busca um usuário pelo nome
 Usuario* buscar(Usuario* raiz, char *nome) {
     if (raiz == NULL) return NULL;
     int cmp = strcmp(nome, raiz->nome);
@@ -157,6 +180,7 @@ Usuario* buscar(Usuario* raiz, char *nome) {
     return buscar(raiz->dir, nome);
 }
 
+// Lista todos os usuários em ordem alfabética
 void listar(Usuario* raiz) {
     if (raiz != NULL) {
         listar(raiz->esq);
@@ -165,6 +189,7 @@ void listar(Usuario* raiz) {
     }
 }
 
+// Libera toda a memória da árvore
 void liberar(Usuario* raiz) {
     if (raiz != NULL) {
         liberar(raiz->esq);
@@ -173,6 +198,7 @@ void liberar(Usuario* raiz) {
     }
 }
 
+// Função principal: menu de operações
 int main() {
     Usuario* raiz = NULL;
     int opcao, id;
@@ -184,19 +210,19 @@ int main() {
         switch(opcao) {
             case 1:
                 printf("Nome: "); scanf("%s", nome);
-                toLowerStr(nome);
+                toLowerStr(nome); // Converte para minúsculo
                 printf("ID: "); scanf("%d", &id);
                 printf("Email: "); scanf("%s", email);
                 raiz = inserir(raiz, nome, id, email);
                 break;
             case 2:
                 printf("Nome para remover: "); scanf("%s", nome);
-                toLowerStr(nome);
+                toLowerStr(nome); // Converte para minúsculo
                 raiz = remover(raiz, nome);
                 break;
             case 3:
                 printf("Nome para buscar: "); scanf("%s", nome);
-                toLowerStr(nome);
+                toLowerStr(nome); // Converte para minúsculo
                 Usuario* u = buscar(raiz, nome);
                 if (u)
                     printf("Encontrado: %s | ID: %d | Email: %s\n", u->nome, u->id, u->email);
@@ -209,6 +235,6 @@ int main() {
         }
     } while(opcao != 0);
 
-    liberar(raiz);
+    liberar(raiz); // Libera memória ao sair
     return 0;
 }
